@@ -1,0 +1,74 @@
+# Oh-My-Posh Configuration
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+	eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/atomicBit.omp.json)"
+fi
+
+# Adding local bin to the path
+export PATH="$HOME/.local/bin:$PATH"
+
+# Some useful aliases
+alias ls='lsd'
+alias ll='ls -l'
+alias lll='ls -al'
+alias k='kubectl'
+alias vi="nvim"
+alias fe="fzf --preview 'bat --style=numbers --color=always {} | head -500'"
+alias cat="bat"
+alias nano='/opt/homebrew/bin/nano'
+alias hh='hstr'
+alias python="/opt/homebrew/bin/python3"
+export HSTR_CONFIG=hicolor
+export EDITOR="nvim"
+
+# Qualche impostazione carina
+zstyle ':autocomplete:*' widget-style menu-select
+zstyle ':autocomplete:*' min-input 1
+zstyle ':autocomplete:*' max-lines 8
+
+# HSTR configuration - add this to ~/.zshrc
+alias hh=hstr                    # hh to be alias for hstr
+setopt histignorespace           # skip cmds w/ leading space from history
+export HSTR_CONFIG=hicolor       # get more colors
+bindkey -s "\C-r" "\C-a hstr -- \C-j"     # bind hstr to Ctrl-r (for Vi mode check doc)
+export HSTR_TIOCSTI=y
+
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/gennaro/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# Python3
+alias python=/opt/homebrew/bin/python3
+alias pip=/opt/homebrew/bin/pip3
+
+# PyEnv
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+# Autocomplete
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/gennaro/.lmstudio/bin"
+# End of LM Studio CLI section
+
+
+# Created by `pipx` on 2026-07-06 06:14:02
+export PATH="$PATH:/Users/gennaro/.local/bin"
