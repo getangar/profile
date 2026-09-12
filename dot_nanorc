@@ -1,7 +1,0 @@
-set mouse
-set linenumbers
-set numbercolor yellow,normal
-set autoindent
-set tabstospaces
-set tabsize 4
-set constantshow

@@ -20,7 +20,7 @@ alias cat='bat'
 alias nano='/opt/homebrew/bin/nano'
 alias hh='hstr'
 alias fe="fzf --preview 'bat --style=numbers --color=always {} | head -500'"
-alias fev='fzf --preview "bat --style=numbers --color=always {} | head -500" | xargs -o vi'
+alias fev='fzf --preview "bat --style=numbers --color=always {} | head -500" | xargs -o nvim'
 alias fen='fzf --preview "bat --style=numbers --color=always {} | head -500" | xargs -o nano'
 
 # RIMOSSI di proposito:

@@ -1,0 +1,8 @@
+# Include tutti i file di syntax highlighting
+include "/opt/homebrew/share/nano/*.nanorc"
+
+set numbercolor cyan,normal
+set linenumbers        # Mostra i numeri di riga
+set mouse              # Abilita il mouse
+set autoindent         # Indentazione automatica
+set tabsize 4          # Dimensione tab

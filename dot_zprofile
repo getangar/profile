@@ -1,5 +1,38 @@
+# ~/.zprofile — eseguito una volta per ogni login shell (ogni nuovo tab iTerm2).
+# Obiettivo: costruire l'ambiente senza lanciare un solo processo bash.
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Guardia contro il doppio sourcing (il tuo /etc/zprofile sembra caricarlo due volte).
+[[ -n ${__ZPROFILE_LOADED-} ]] && return
+typeset -g __ZPROFILE_LOADED=1
 
-# Created by `pipx` on 2026-07-06 06:14:02
-export PATH="$PATH:/Users/gennaro/.local/bin"
+# Elementi duplicati in PATH/FPATH/MANPATH vengono rimossi automaticamente.
+typeset -U path fpath manpath
+
+
+# --- Homebrew ---------------------------------------------------------------
+# Equivalente statico di:  eval "$(/opt/homebrew/bin/brew shellenv)"
+# `brew` è uno script con shebang #!/bin/bash: ogni invocazione = un processo bash.
+# Per rigenerare questi valori dopo un aggiornamento maggiore di Homebrew:
+#     /opt/homebrew/bin/brew shellenv
+export HOMEBREW_PREFIX="/opt/homebrew"
+export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+export HOMEBREW_REPOSITORY="/opt/homebrew"
+export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:"
+export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}"
+
+path=(/opt/homebrew/bin /opt/homebrew/sbin $path)
+fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
+
+
+# --- pyenv (solo PATH) ------------------------------------------------------
+# Sostituisce  eval "$(pyenv init --path)" , che internamente esegue bash due volte.
+# pyenv è installato via Homebrew, quindi $PYENV_ROOT/bin non serve: basta shims.
+export PYENV_ROOT="$HOME/.pyenv"
+path=($PYENV_ROOT/shims $path)
+
+
+# --- Percorsi personali -----------------------------------------------------
+path=($HOME/.local/bin $path)        # pipx e binari locali
+path=($path $HOME/.lmstudio/bin)     # LM Studio CLI
+
+export PATH
