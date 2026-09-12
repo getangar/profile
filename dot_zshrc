@@ -1,74 +1,108 @@
-# Oh-My-Posh Configuration
-if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-	eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/atomicBit.omp.json)"
+# ~/.zshrc — solo shell interattive.
+# Regola seguita in tutto il file: mai `$(brew ...)` e mai più di una
+# inizializzazione di pyenv, perché entrambi sono script bash.
+
+# --- Prompt (oh-my-posh) ----------------------------------------------------
+# $HOMEBREW_PREFIX arriva da .zprofile, così non serve chiamare `brew --prefix`.
+# .../opt/<formula> è un symlink stabile: non si rompe agli aggiornamenti.
+if [[ $TERM_PROGRAM != "Apple_Terminal" ]]; then
+  eval "$(oh-my-posh init zsh --config $HOMEBREW_PREFIX/opt/oh-my-posh/themes/atomicBit.omp.json)"
 fi
 
-# Adding local bin to the path
-export PATH="$HOME/.local/bin:$PATH"
 
-# Some useful aliases
+# --- Alias ------------------------------------------------------------------
 alias ls='lsd'
 alias ll='ls -l'
 alias lll='ls -al'
 alias k='kubectl'
-alias vi="nvim"
-alias fe="fzf --preview 'bat --style=numbers --color=always {} | head -500'"
-alias cat="bat"
+alias vi='nvim'
+alias cat='bat'
 alias nano='/opt/homebrew/bin/nano'
 alias hh='hstr'
-alias python="/opt/homebrew/bin/python3"
-export HSTR_CONFIG=hicolor
+alias fe="fzf --preview 'bat --style=numbers --color=always {} | head -500'"
+alias fev='fzf --preview "bat --style=numbers --color=always {} | head -500" | xargs -r vi'
+alias fen='fzf --preview "bat --style=numbers --color=always {} | head -500" | xargs -r nano'
+
+# RIMOSSI di proposito:
+#     alias python=/opt/homebrew/bin/python3
+#     alias pip=/opt/homebrew/bin/pip3
+# Annullavano gli shim di pyenv: in shell interattiva l'alias vinceva sempre,
+# qualunque fosse il `pyenv local` / `pyenv global` impostato.
+# Se vuoi tornare al comportamento precedente senza rompere pyenv:
+#     pyenv global system
+# Attenzione: `python` (senza il 3) potrebbe non esistere più, perché la formula
+# python di Homebrew installa solo python3. In quel caso la soluzione pulita è
+# installare un interprete gestito da pyenv:
+#     pyenv install 3.13 && pyenv global 3.13
+
 export EDITOR="nvim"
 
-# Qualche impostazione carina
-zstyle ':autocomplete:*' widget-style menu-select
-zstyle ':autocomplete:*' min-input 1
-zstyle ':autocomplete:*' max-lines 8
 
-# HSTR configuration - add this to ~/.zshrc
-alias hh=hstr                    # hh to be alias for hstr
-setopt histignorespace           # skip cmds w/ leading space from history
-export HSTR_CONFIG=hicolor       # get more colors
-bindkey -s "\C-r" "\C-a hstr -- \C-j"     # bind hstr to Ctrl-r (for Vi mode check doc)
+# --- hstr -------------------------------------------------------------------
+export HSTR_CONFIG=hicolor
 export HSTR_TIOCSTI=y
+setopt histignorespace          # comandi con spazio iniziale fuori dalla history
 
 
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/gennaro/.docker/completions $fpath)
+# --- Completamento ----------------------------------------------------------
+fpath=($HOME/.docker/completions $fpath)
+
 autoload -Uz compinit
-compinit
-# End of Docker CLI completions
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+_zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-$ZSH_VERSION"
+mkdir -p ${_zcompdump:h}
+compinit -d $_zcompdump
+unset _zcompdump
 
-# Python3
-alias python=/opt/homebrew/bin/python3
-alias pip=/opt/homebrew/bin/pip3
 
-# PyEnv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# --- pyenv ------------------------------------------------------------------
+# Una sola inizializzazione, con l'output messo in cache su file.
+# Prima erano quattro eval: `pyenv init -` (x2), `--path`, `virtualenv-init -`.
+# Ciascuno costava due processi bash, perché lo script generato da pyenv
+# contiene a sua volta una chiamata `bash --norc -ec` per deduplicare il PATH.
+# --no-push-path elimina proprio quella chiamata: gli shim li mette già .zprofile.
+# La cache si rigenera da sola quando aggiorni pyenv; per forzarla:
+#     rm ~/.cache/zsh/pyenv-init.zsh
+_pyenv_init="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/pyenv-init.zsh"
+if [[ ! -s $_pyenv_init || ${commands[pyenv]} -nt $_pyenv_init ]]; then
+  mkdir -p ${_pyenv_init:h}
+  {
+	pyenv init - --no-push-path zsh
+	pyenv virtualenv-init - zsh
+  } > $_pyenv_init
+fi
+source $_pyenv_init
+unset _pyenv_init
 
-# Autocomplete
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
+
+# --- fzf --------------------------------------------------------------------
+# La vecchia riga `[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh` era un no-op:
+# quel file non esiste sul tuo sistema (confermato da SOURCE_TRACE).
+# `fzf --zsh` richiede fzf >= 0.48 — verifica con `fzf --version`.
+if (( $+commands[fzf] )); then
+  source <(fzf --zsh)
+fi
+
+
+# --- zsh-autosuggestions ----------------------------------------------------
+source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Le tre zstyle ':autocomplete:*' che avevi appartengono a zsh-autocomplete
+# (marlonrichert), che è un plugin diverso e non risulta caricato: erano
+# configurazione morta. Verifica con `type _autocomplete`; se vuoi davvero
+# quel plugin va installato e sorciato, poi puoi riattivare queste righe.
+# zstyle ':autocomplete:*' widget-style menu-select
+# zstyle ':autocomplete:*' min-input 1
+# zstyle ':autocomplete:*' max-lines 8
+
+
+# --- Keybinding -------------------------------------------------------------
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-
 bindkey "^[[A" up-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
 
+# hstr su Ctrl-R: DEVE stare dopo fzf, che altrimenti si prende lui la combinazione.
+bindkey -s "\C-r" "\C-a hstr -- \C-j"
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/gennaro/.lmstudio/bin"
-# End of LM Studio CLI section
-
-
-# Created by `pipx` on 2026-07-06 06:14:02
-export PATH="$PATH:/Users/gennaro/.local/bin"
+compdef sshrc=ssh
