@@ -106,3 +106,8 @@ bindkey "^[[B" down-line-or-beginning-search
 bindkey -s "\C-r" "\C-a hstr -- \C-j"
 
 compdef sshrc=ssh
+
+# Avvia tmux automaticamente solo in shell interattive e fuori da sessioni tmux
+if [[ -z "$TMUX" ]] && [[ -n "$PS1" ]] && [[ $- == *i* ]]; then
+  tmux attach-session -t default 2>/dev/null || tmux new-session -s default
+fi
