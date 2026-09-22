@@ -107,7 +107,13 @@ bindkey -s "\C-r" "\C-a hstr -- \C-j"
 
 compdef sshrc=ssh
 
-# Avvia tmux automaticamente solo in shell interattive e fuori da sessioni tmux
-if [[ -z "$TMUX" ]] && [[ -n "$PS1" ]] && [[ $- == *i* ]]; then
-  tmux attach-session -t default 2>/dev/null || tmux new-session -s default
-fi
+# Se siamo fuori da tmux, in una shell interattiva
+#if [[ -z "$TMUX" ]] && [[ -n "$PS1" ]] && [[ $- == *i* ]]; then
+#  # Se la sessione 'default' esiste, crea una nuova finestra e collegati
+#  if tmux has-session -t default 2>/dev/null; then
+#    exec tmux new-window -t default
+#  else
+#    # Altrimenti crea la sessione 'default' da zero
+#    exec tmux new-session -s default
+#  fi
+#fi
