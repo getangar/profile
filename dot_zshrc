@@ -13,7 +13,7 @@ fi
 # --- Alias ------------------------------------------------------------------
 alias ls='lsd'
 alias ll='ls -l'
-alias lll='ls -al'
+alias l='ls -al'
 alias k='kubectl'
 alias vi='nvim'
 alias cat='bat'
