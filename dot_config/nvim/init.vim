@@ -110,9 +110,21 @@ nnoremap <C-f> :Rg<CR>     " usa ripgrep (:Ag richiede silver_searcher)
 nnoremap <leader>w :w<CR>
 nnoremap <leader>q :q<CR>
 
+
+noremap <PageUp> <C-b>
+noremap <PageDown> <C-f>
+inoremap <PageUp> <C-b>
+inoremap <PageDown> <C-f>
+
+noremap <Home> gg
+noremap <End> G
+inoremap <Home> <C-o>gg
+inoremap <End> <C-o>G
+
 " fzf: usa ripgrep per Rg se disponibile
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git"'
 endif
+
 
 set mouse=a
