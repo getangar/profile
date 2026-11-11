@@ -1,0 +1,50 @@
+{{- $model := "qwen3.6:35b-mlx" -}}
+{{- $name := "Qwen3.6 35B-A3B (MLX)" -}}
+{{- $ctx := 32768 -}}
+{{- if eq .chezmoi.hostname "Cheetah" -}}
+{{-   $model = "qwen3-coder-next:latest" -}}
+{{-   $name = "Qwen3 Coder Next 80B" -}}
+{{-   $ctx = 65536 -}}
+{{- end -}}
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/{{ $model }}",
+  "small_model": "ollama/{{ $model }}",
+  "enabled_providers": ["ollama"],
+  "autoupdate": false,
+  "share": "disabled",
+  "permission": {
+    "edit": "ask",
+    "bash": {
+      "*": "ask",
+      "xcodebuild *": "allow",
+      "swift build*": "allow",
+      "swift test*": "allow",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow"
+    }
+  },
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "{{ $model }}": {
+          "name": "{{ $name }}",
+          "limit": { "context": {{ $ctx }}, "output": 8192 }
+        }
+      }
+    }
+  },
+  "mcp": {
+    "xcode": {
+      "type": "local",
+      "command": ["xcrun", "mcpbridge"],
+      "enabled": true
+    }
+  }
+}
