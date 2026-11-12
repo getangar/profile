@@ -2,6 +2,9 @@ tap "brejoc/tap"
 tap "getangar/gtbrewmanager", trusted: true
 tap "jandedobbeleer/oh-my-posh"
 tap "microsoft/sysinternalstap"
+tap "tuist/tuist"
+brew "tuist"
+brew "xcbeautify"
 # General-purpose data compression with high compression ratio
 brew "xz"
 # GNU multiple precision arithmetic library
