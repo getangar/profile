@@ -37,8 +37,6 @@ brew "cmake"
 brew "cmake-docs"
 # YAML Parser
 brew "libyaml"
-# Dependency manager for Cocoa projects
-brew "cocoapods"
 # Apjanke's fork of the classic cowsay project
 brew "cowsay"
 # Tools to create, check and label file systems of the FAT family
