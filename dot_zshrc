@@ -1,10 +1,8 @@
 # ~/.zshrc — solo shell interattive.
-# Regola seguita in tutto il file: mai `$(brew ...)` e mai più di una
-# inizializzazione di pyenv, perché entrambi sono script bash.
+# Regola: mai `$(brew ...)`, e pyenv/rbenv inizializzati una sola volta
+# da cache, perché sono script bash.
 
 # --- Prompt (oh-my-posh) ----------------------------------------------------
-# $HOMEBREW_PREFIX arriva da .zprofile, così non serve chiamare `brew --prefix`.
-# .../opt/<formula> è un symlink stabile: non si rompe agli aggiornamenti.
 if [[ $TERM_PROGRAM != "Apple_Terminal" ]]; then
   eval "$(oh-my-posh init zsh --config $HOMEBREW_PREFIX/opt/oh-my-posh/themes/atomicBit.omp.json)"
 fi
@@ -22,18 +20,6 @@ alias hh='hstr'
 alias fe="fzf --preview 'bat --style=numbers --color=always {} | head -500'"
 alias fev='fzf --preview "bat --style=numbers --color=always {} | head -500" | xargs -o nvim'
 alias fen='fzf --preview "bat --style=numbers --color=always {} | head -500" | xargs -o nano'
-
-# RIMOSSI di proposito:
-#     alias python=/opt/homebrew/bin/python3
-#     alias pip=/opt/homebrew/bin/pip3
-# Annullavano gli shim di pyenv: in shell interattiva l'alias vinceva sempre,
-# qualunque fosse il `pyenv local` / `pyenv global` impostato.
-# Se vuoi tornare al comportamento precedente senza rompere pyenv:
-#     pyenv global system
-# Attenzione: `python` (senza il 3) potrebbe non esistere più, perché la formula
-# python di Homebrew installa solo python3. In quel caso la soluzione pulita è
-# installare un interprete gestito da pyenv:
-#     pyenv install 3.13 && pyenv global 3.13
 
 export EDITOR="nvim"
 
@@ -55,29 +41,37 @@ unset _zcompdump
 
 
 # --- pyenv ------------------------------------------------------------------
-# Una sola inizializzazione, con l'output messo in cache su file.
-# Prima erano quattro eval: `pyenv init -` (x2), `--path`, `virtualenv-init -`.
-# Ciascuno costava due processi bash, perché lo script generato da pyenv
-# contiene a sua volta una chiamata `bash --norc -ec` per deduplicare il PATH.
-# --no-push-path elimina proprio quella chiamata: gli shim li mette già .zprofile.
-# La cache si rigenera da sola quando aggiorni pyenv; per forzarla:
+# Init in cache; gli shim li mette .zprofile. Per rigenerare:
 #     rm ~/.cache/zsh/pyenv-init.zsh
 _pyenv_init="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/pyenv-init.zsh"
 if [[ ! -s $_pyenv_init || ${commands[pyenv]} -nt $_pyenv_init ]]; then
   mkdir -p ${_pyenv_init:h}
   {
-	pyenv init - --no-push-path zsh
-	pyenv virtualenv-init - zsh
+    pyenv init - --no-push-path zsh
+    pyenv virtualenv-init - zsh
   } > $_pyenv_init
 fi
 source $_pyenv_init
 unset _pyenv_init
 
 
+# --- rbenv ------------------------------------------------------------------
+# Init in cache; gli shim li mette .zprofile. Dopo aver installato una gem
+# con eseguibili, se il comando non si trova: `rbenv rehash`. Per rigenerare:
+#     rm ~/.cache/zsh/rbenv-init.zsh
+_rbenv_init="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/rbenv-init.zsh"
+if [[ ! -s $_rbenv_init || ${commands[rbenv]} -nt $_rbenv_init ]]; then
+  mkdir -p ${_rbenv_init:h}
+  rbenv init - --no-rehash zsh > $_rbenv_init
+fi
+source $_rbenv_init
+unset _rbenv_init
+# rbenv init ri-antepone gli shim già messi da .zprofile: tiene solo
+# la prima occorrenza di ogni voce del PATH.
+path=(${(u)path})
+
+
 # --- fzf --------------------------------------------------------------------
-# La vecchia riga `[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh` era un no-op:
-# quel file non esiste sul tuo sistema (confermato da SOURCE_TRACE).
-# `fzf --zsh` richiede fzf >= 0.48 — verifica con `fzf --version`.
 if (( $+commands[fzf] )); then
   source <(fzf --zsh)
 fi
@@ -85,14 +79,6 @@ fi
 
 # --- zsh-autosuggestions ----------------------------------------------------
 source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# Le tre zstyle ':autocomplete:*' che avevi appartengono a zsh-autocomplete
-# (marlonrichert), che è un plugin diverso e non risulta caricato: erano
-# configurazione morta. Verifica con `type _autocomplete`; se vuoi davvero
-# quel plugin va installato e sorciato, poi puoi riattivare queste righe.
-# zstyle ':autocomplete:*' widget-style menu-select
-# zstyle ':autocomplete:*' min-input 1
-# zstyle ':autocomplete:*' max-lines 8
 
 
 # --- Keybinding -------------------------------------------------------------
@@ -102,18 +88,7 @@ zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
 
-# hstr su Ctrl-R: DEVE stare dopo fzf, che altrimenti si prende lui la combinazione.
+# hstr su Ctrl-R: deve stare dopo fzf.
 bindkey -s "\C-r" "\C-a hstr -- \C-j"
 
 compdef sshrc=ssh
-
-# Se siamo fuori da tmux, in una shell interattiva
-#if [[ -z "$TMUX" ]] && [[ -n "$PS1" ]] && [[ $- == *i* ]]; then
-#  # Se la sessione 'default' esiste, crea una nuova finestra e collegati
-#  if tmux has-session -t default 2>/dev/null; then
-#    exec tmux new-window -t default
-#  else
-#    # Altrimenti crea la sessione 'default' da zero
-#    exec tmux new-session -s default
-#  fi
-#fi

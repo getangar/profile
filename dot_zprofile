@@ -1,18 +1,16 @@
-# ~/.zprofile — eseguito una volta per ogni login shell (ogni nuovo tab iTerm2).
-# Obiettivo: costruire l'ambiente senza lanciare un solo processo bash.
+# ~/.zprofile — eseguito una volta per ogni login shell.
+# Obiettivo: costruire l'ambiente senza lanciare processi bash.
 
-# Guardia contro il doppio sourcing (il tuo /etc/zprofile sembra caricarlo due volte).
+# Guardia contro il doppio sourcing.
 [[ -n ${__ZPROFILE_LOADED-} ]] && return
 typeset -g __ZPROFILE_LOADED=1
 
-# Elementi duplicati in PATH/FPATH/MANPATH vengono rimossi automaticamente.
+# Rimuove automaticamente i duplicati da PATH/FPATH/MANPATH.
 typeset -U path fpath manpath
 
 
 # --- Homebrew ---------------------------------------------------------------
-# Equivalente statico di:  eval "$(/opt/homebrew/bin/brew shellenv)"
-# `brew` è uno script con shebang #!/bin/bash: ogni invocazione = un processo bash.
-# Per rigenerare questi valori dopo un aggiornamento maggiore di Homebrew:
+# Equivalente statico di `brew shellenv`. Per rigenerarlo:
 #     /opt/homebrew/bin/brew shellenv
 export HOMEBREW_PREFIX="/opt/homebrew"
 export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
@@ -24,11 +22,14 @@ path=(/opt/homebrew/bin /opt/homebrew/sbin $path)
 fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 
 
-# --- pyenv (solo PATH) ------------------------------------------------------
-# Sostituisce  eval "$(pyenv init --path)" , che internamente esegue bash due volte.
-# pyenv è installato via Homebrew, quindi $PYENV_ROOT/bin non serve: basta shims.
+# --- pyenv (solo shim) ------------------------------------------------------
 export PYENV_ROOT="$HOME/.pyenv"
 path=($PYENV_ROOT/shims $path)
+
+
+# --- rbenv (solo shim) ------------------------------------------------------
+# Davanti a /opt/homebrew/bin, così vince sul Ruby di Homebrew.
+path=($HOME/.rbenv/shims $path)
 
 
 # --- Percorsi personali -----------------------------------------------------
