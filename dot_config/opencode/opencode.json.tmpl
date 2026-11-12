@@ -1,9 +1,9 @@
 {{- $model := "qwen3.6:35b-mlx" -}}
-{{- $name := "Qwen3.6 35B-A3B (MLX)" -}}
+{{- $name := "Qwen3.6 35B-A3B (MLX 4-bit)" -}}
 {{- $ctx := 32768 -}}
 {{- if eq .chezmoi.hostname "Cheetah" -}}
-{{-   $model = "qwen3-coder-next:latest" -}}
-{{-   $name = "Qwen3 Coder Next 80B" -}}
+{{-   $model = "qwen3.6:35b-a3b-coding-mxfp8" -}}
+{{-   $name = "Qwen3.6 35B-A3B coding (MLX 8-bit)" -}}
 {{-   $ctx = 65536 -}}
 {{- end -}}
 {
@@ -15,6 +15,7 @@
   "share": "disabled",
   "permission": {
     "edit": "ask",
+    "external_directory": "ask",
     "bash": {
       "*": "ask",
       "xcodebuild *": "allow",

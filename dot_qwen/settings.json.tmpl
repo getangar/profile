@@ -1,0 +1,37 @@
+{
+  "modelProviders": {
+    "openai": [
+      {
+        "id": "qwen3.6:35b-mlx",
+        "name": "Qwen3.6 35B-A3B (MLX, local)",
+        "envKey": "OLLAMA_API_KEY",
+        "baseUrl": "http://localhost:11434/v1",
+        "generationConfig": {
+          "timeout": 300000,
+          "maxRetries": 1
+        }
+      }
+    ]
+  },
+  "env": {
+    "OLLAMA_API_KEY": "ollama"
+  },
+  "security": {
+    "auth": {
+      "selectedType": "openai"
+    }
+  },
+  "model": {
+    "name": "Qwen3.6 35B-A3B (MLX, local)"
+  },
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+  "tools": {
+    "approvalMode": "default"
+  },
+  "$version": 4,
+  "ui": {
+    "autoModeAcknowledged": true
+  }
+}
