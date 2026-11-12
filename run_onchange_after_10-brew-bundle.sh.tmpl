@@ -1,0 +1,4 @@
+#!/bin/zsh
+# Rieseguito da chezmoi solo quando cambia il Brewfile.
+# Brewfile hash: {{ include "private_dot_homebrew/Brewfile" | sha256sum }}
+/opt/homebrew/bin/brew bundle --file="$HOME/.homebrew/Brewfile" --no-upgrade

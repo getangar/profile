@@ -1,0 +1,148 @@
+tap "brejoc/tap"
+tap "getangar/gtbrewmanager", trusted: true
+tap "jandedobbeleer/oh-my-posh"
+tap "microsoft/sysinternalstap"
+# General-purpose data compression with high compression ratio
+brew "xz"
+# GNU multiple precision arithmetic library
+brew "gmp"
+# GNU compiler collection for aarch64-elf
+brew "aarch64-elf-gcc"
+# Automatic configure script builder
+brew "autoconf"
+# Library for command-line editing
+brew "readline"
+# Bourne-Again SHell, a UNIX command interpreter
+brew "bash"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@4"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Google's own build tool
+brew "bazel"
+# Resource monitor. C++ version and continuation of bashtop and bpytop
+brew "btop"
+# Decentralized dependency manager for Cocoa
+brew "carthage"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
+# Cross-platform make
+brew "cmake"
+# Documentation for CMake
+brew "cmake-docs"
+# YAML Parser
+brew "libyaml"
+# Dependency manager for Cocoa projects
+brew "cocoapods"
+# Apjanke's fork of the classic cowsay project
+brew "cowsay"
+# Tools to create, check and label file systems of the FAT family
+brew "dosfstools"
+# Device tree compiler
+brew "dtc"
+# Disk Usage/Free Utility - a better 'df' alternative
+brew "duf"
+# More intuitive version of du in rust
+brew "dust"
+# GNU Emacs text editor
+brew "emacs"
+# Modern, maintained replacement for ls
+brew "eza"
+# Easiest way to build and release mobile apps
+brew "fastlane"
+# Banner-like program prints strings as ASCII art
+brew "figlet"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Syntax-highlighting pager for git and diff output
+brew "git-delta"
+# Git extension for versioning large files
+brew "git-lfs"
+# Tool for glamorous shell scripts
+brew "gum"
+# Improved top (interactive process viewer)
+brew "htop"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Kubernetes CLI To Manage Your Clusters In Style!
+brew "k9s"
+# Kubernetes command-line interface
+brew "kubernetes-cli"
+# Simple terminal UI for git commands
+brew "lazygit"
+# Rainbows and unicorns in your console!
+brew "lolcat"
+# Clone of ls with colorful output, file type icons, and more
+brew "lsd"
+# Apple Silicon Monitor Top written in Go Lang
+brew "mactop"
+# Terminal-based visual file manager
+brew "midnight-commander"
+# Command-line interface for SQLite
+brew "sqlite"
+# Tools for manipulating MSDOS files
+brew "mtools"
+# Free (GNU) replacement for the Pico text editor
+brew "nano"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Small build system for use with gyp or CMake
+brew "ninja"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# Create, run, and share large language models (LLMs)
+brew "ollama"
+# Command-line Git information tool
+brew "onefetch"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# AI coding agent, built for the terminal
+brew "opencode"
+# Python version management
+brew "pyenv"
+# Pyenv plugin to manage virtualenv
+brew "pyenv-virtualenv"
+# Generic machine emulator and virtualizer
+brew "qemu"
+# AI-powered command-line workflow tool for developers
+brew "qwen-code"
+# File browser
+brew "ranger"
+# Ruby version manager
+brew "rbenv"
+# Formatting tool for reformatting Swift code
+brew "swiftformat"
+# Tool to enforce Swift style and conventions
+brew "swiftlint"
+# Terminal multiplexer
+brew "tmux"
+# Color-based alternative to figlet (uses libcaca)
+brew "toilet"
+# Vi 'workalike' with many additional features
+brew "vim"
+# Internet file retriever
+brew "wget"
+# Generate your Xcode project from a spec file and your folder structure
+brew "xcodegen"
+# Command-line tool to install and switch between multiple versions of Xcode
+brew "xcodes"
+# Blazing fast terminal file manager written in Rust, based on async I/O
+brew "yazi"
+# General-purpose lossless data-compression library
+brew "zlib"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Native macOS GUI for Homebrew formulae, casks and services
+cask "getangar/gtbrewmanager/gt-brew-manager"
+# Homebrew's official GUI
+cask "homebrew-app"
+# Disk space analyser
+cask "macdirstat"
+# Xcode Extension for reformatting Swift code
+cask "swiftformat-for-xcode"
+# Screen zoom, annotation, capture, and recording utility
+cask "microsoft/sysinternalstap/zoomit", trusted: true
